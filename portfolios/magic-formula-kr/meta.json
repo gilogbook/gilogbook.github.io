@@ -1,0 +1,14 @@
+{
+  "id": "magic-formula-kr",
+  "strategy": "magic_formula",
+  "market": "kr",
+  "display_name": "마법공식 · 한국",
+  "started": null,
+  "initial_capital": null,
+  "currency": "KRW",
+  "holdings_count": null,
+  "benchmark": "KOSPI_TR",
+  "dividend": null,
+  "rebalance": { "month": 4, "day": "first_trading_day" },
+  "costs": { "commission_bps": null, "slippage_bps": null }
+}
