@@ -218,3 +218,6 @@ __marimo__/
 
 data/cache/
 CORPCODE.xml
+
+# 배포용 임시 압축파일
+*.zip
