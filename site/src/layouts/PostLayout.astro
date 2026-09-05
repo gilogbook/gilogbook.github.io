@@ -1,5 +1,5 @@
 ---
-const { frontmatter } = Astro.props;
+const { frontmatter, commitPath, legacyPath } = Astro.props;
 const title = frontmatter?.title ?? "gilogbook";
 const description = frontmatter?.description ?? "";
 const category = frontmatter?.category ?? "";
@@ -16,6 +16,7 @@ if (raw) {
       String(d.getDate()).padStart(2, "0");
   }
 }
+const REPO = "https://github.com/gilogbook/gilogbook.github.io/commits/main";
 ---
 
 <!doctype html>
@@ -54,6 +55,28 @@ if (raw) {
       <article>
         <slot />
       </article>
+
+      {commitPath && (
+        <div class="commits">
+          <div class="commits-label">수정 이력</div>
+          <p>
+            <a href={`${REPO}/${commitPath}`}>현재 경로의 커밋 이력</a>
+            {legacyPath && (
+              <>
+                {" · "}
+                <a href={`${REPO}/${legacyPath}`}>2026-09-05 이전 경로의 커밋 이력</a>
+              </>
+            )}
+          </p>
+          {legacyPath && (
+            <p class="commits-note">
+              2026-09-05에 글 파일의 저장 위치를 옮겼습니다. GitHub의 경로별 커밋 이력은
+              이동 이전 기록을 따라가지 않으므로 두 경로를 함께 답니다. 본문은 발행 이후
+              고치지 않으며, 사실 정정은 글 맨 아래 덧붙임으로만 추가합니다.
+            </p>
+          )}
+        </div>
+      )}
     </main>
 
     <footer>
@@ -181,6 +204,45 @@ if (raw) {
       article td { padding: 9px 10px; border-bottom: 1px solid var(--rule); }
       article tbody tr:nth-child(even) td { background: var(--band); }
       article > p:last-child { color: var(--ink-soft); font-size: 14px; }
+
+      .commits {
+        margin-top: 44px;
+        padding-top: 16px;
+        border-top: 1px solid var(--rule);
+      }
+      .commits-label {
+        font-family: "Archivo", sans-serif;
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 8px;
+      }
+      .commits p {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+        line-height: 1.9;
+      }
+      .commits a { color: var(--seal); text-decoration: underline; text-underline-offset: 3px; }
+      .commits-note {
+        margin-top: 8px;
+        font-family: "IBM Plex Sans KR", system-ui, sans-serif;
+        font-size: 13px;
+        line-height: 1.8;
+        color: var(--ink-faint);
+      }
+
+      .post-list { list-style: none; padding-left: 0; }
+      .post-list li { margin-top: 18px; }
+      .post-list .t { font-weight: 700; }
+      .post-list .d {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11.5px;
+        color: var(--ink-faint);
+        margin-left: 8px;
+      }
+      .post-list .s { display: block; color: var(--ink-soft); font-size: 14.5px; margin-top: 2px; }
 
       footer {
         max-width: 720px;

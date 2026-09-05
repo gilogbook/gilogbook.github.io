@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+// 예약발행 장치
+// pubDate가 빌드 시각보다 미래인 글은 페이지를 만들지 않는다.
+// 파일이 저장소에 있어도 사이트에는 나타나지 않으며,
+// 매일 09:05 KST cron 재빌드에서 시각이 지나면 그때 발행된다.
+export async function getStaticPaths() {
+  const now = Date.now();
+  const posts = await getCollection('posts', ({ data }) => data.pubDate.getTime() <= now);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// 커밋 이력 링크
+// 2026-09-05에 글 파일을 src/pages/posts/ 에서 src/content/posts/ 로 옮겼다.
+// GitHub의 경로별 커밋 이력은 이동 이전 커밋을 따라가지 않으므로 두 경로를 함께 건다.
+const commitPath = `site/src/content/posts/${post.id}.md`;
+const legacyPath = `site/src/pages/posts/${post.id}.md`;
+---
+
+<PostLayout frontmatter={post.data} commitPath={commitPath} legacyPath={legacyPath}>
+  <Content />
+</PostLayout>

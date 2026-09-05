@@ -3,6 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
+  # 예약발행 재빌드
+  # 00:05 UTC = 09:05 KST. 발행 슬롯 09:00 이후에 돌도록 5분 여유를 둔다.
+  # cron은 정시를 보장하지 않는다(수 분~수십 분 지연, 드물게 누락).
+  # 이르게 도는 일은 없으므로 09:00 이전 발행은 발생하지 않는다.
+  schedule:
+    - cron: '5 0 * * *'
   workflow_dispatch:
 
 permissions:

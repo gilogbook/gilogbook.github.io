@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import PostLayout from '../layouts/PostLayout.astro';
+
+// 발행 시각이 지난 글만 목록에 올린다.
+// [...slug].astro 의 필터와 같은 기준을 쓰므로 목록에 있는 글은 반드시 페이지가 있다.
+const now = Date.now();
+const posts = (await getCollection('posts', ({ data }) => data.pubDate.getTime() <= now))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const fm = {
+  title: "운용기록",
+  description: "해외 퀀트 전략을 한국·미국 시장에서 규칙 그대로 검증하는 공개 기록 아카이브",
+};
+
+const fmt = (d) =>
+  d.getFullYear() + "-" +
+  String(d.getMonth() + 1).padStart(2, "0") + "-" +
+  String(d.getDate()).padStart(2, "0");
+---
+
+<PostLayout frontmatter={fm}>
+  <p>이 사이트는 해외에서 검증됐다고 알려진 퀀트 투자 전략을 한국과 미국 시장에서 규칙 그대로 돌리고, 그 결과를 기록합니다.</p>
+
+  <p>규칙도 결과도 커밋 이력으로 남기므로 나중에 유리하게 고쳐 쓸 수 없습니다. 그 증명 가능성이 이 사이트가 가진 유일한 자산입니다. 수익률이 아닙니다.</p>
+
+  <p>첫 번째 대상은 조엘 그린블라트의 마법공식이고, <strong>운용 기록은 2026년 9월 15일에 시작합니다.</strong></p>
+
+  <h2>글</h2>
+
+  <ul class="post-list">
+    {posts.map((p) => (
+      <li>
+        <a class="t" href={`/posts/${p.id}`}>{p.data.title}</a>
+        <span class="d">{fmt(p.data.pubDate)}</span>
+        {p.data.description && <span class="s">{p.data.description}</span>}
+      </li>
+    ))}
+  </ul>
+
+  <h2>문서</h2>
+
+  <ul>
+    <li><a href="/methodology">방법론</a> — 계산 방식·데이터 출처·결측 처리·알려진 한계</li>
+    <li><a href="/about">소개</a> — 이 사이트가 무엇이고 무엇을 하지 않는가</li>
+  </ul>
+</PostLayout>
