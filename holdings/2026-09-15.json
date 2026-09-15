@@ -1,0 +1,336 @@
+{
+  "_주석": "개시일 보유 종목. 매수 단가와 주수는 2026-09-16에 확정한다 — KRX가 전일 종가를 익일 08시경 게시하기 때문이다. 실제 자금이 투입되지 않은 모의 운용이며 개별 종목 추천이 아니다. 과거 기록은 소급 수정하지 않는다.",
+  "schema_version": "1.0",
+  "instance": "KR-01",
+  "date": "2026-09-15",
+  "type": "initial",
+  "committed_at": "2026-09-16T01:39:14+09:00",
+  "ranking": {
+    "as_of": "2026-09-11",
+    "universe_size": 2274,
+    "ranked_size": 2096,
+    "rules_doc": "전략규칙 v0.10 (2026-09-14)",
+    "source": "Greenblatt(2010), pp. 166-169"
+  },
+  "capital": {
+    "initial": 100000000,
+    "per_holding_target": 3333333,
+    "allocated": 99999990,
+    "unallocated": 10
+  },
+  "price_basis": {
+    "date": "2026-09-15",
+    "type": "종가",
+    "confirmed_on": "2026-09-16",
+    "reason": "KRX가 전일 데이터를 익일 08시경 게시한다"
+  },
+  "costs_applied": {
+    "buy_commission_rate": 0.00015,
+    "slippage_rate": 0.0,
+    "note": "매도 비용은 첫 매도(2027년 4월)에 반영된다"
+  },
+  "holdings": [
+    {
+      "rank": 1,
+      "code": "037350",
+      "name": "성도이엔지",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 2,
+      "code": "031820",
+      "name": "아이티센씨티에스",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 3,
+      "code": "088130",
+      "name": "동아엘텍",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 4,
+      "code": "086960",
+      "name": "MDS테크",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 5,
+      "code": "046940",
+      "name": "우원개발",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 6,
+      "code": "025770",
+      "name": "한국정보통신",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 7,
+      "code": "054040",
+      "name": "한국컴퓨터",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 8,
+      "code": "403850",
+      "name": "더핑크퐁컴퍼니",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 9,
+      "code": "461300",
+      "name": "아이스크림미디어",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 10,
+      "code": "214320",
+      "name": "이노션",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 11,
+      "code": "034310",
+      "name": "NICE",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 12,
+      "code": "184230",
+      "name": "SGA솔루션즈",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 13,
+      "code": "069510",
+      "name": "에스텍",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 14,
+      "code": "036030",
+      "name": "케이티알파",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 15,
+      "code": "259630",
+      "name": "엠플러스",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 16,
+      "code": "214270",
+      "name": "FSN",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 17,
+      "code": "002880",
+      "name": "디와이에이",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 18,
+      "code": "215200",
+      "name": "메가스터디교육",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 19,
+      "code": "123420",
+      "name": "위메이드플레이",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 20,
+      "code": "173130",
+      "name": "오파스넷",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 21,
+      "code": "002140",
+      "name": "고려산업",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 22,
+      "code": "039830",
+      "name": "오로라",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 23,
+      "code": "375500",
+      "name": "DL이앤씨",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 24,
+      "code": "224110",
+      "name": "에이텍모빌리티",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 25,
+      "code": "267790",
+      "name": "배럴",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 26,
+      "code": "066620",
+      "name": "국보디자인",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 27,
+      "code": "142210",
+      "name": "유니트론텍",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 28,
+      "code": "052600",
+      "name": "한네트",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 29,
+      "code": "067160",
+      "name": "SOOP",
+      "market": "KOSDAQ",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    },
+    {
+      "rank": 30,
+      "code": "035510",
+      "name": "신세계 I&C",
+      "market": "KOSPI",
+      "target_amount": 3333333,
+      "shares": null,
+      "buy_price": null,
+      "note": null
+    }
+  ],
+  "cash": null,
+  "nav": null
+}
