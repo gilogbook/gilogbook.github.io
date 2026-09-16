@@ -1,5 +1,5 @@
 {
-  "_주석": "개시일 보유 종목. 매수 단가와 주수는 2026-09-16에 확정한다 — KRX가 전일 종가를 익일 08시경 게시하기 때문이다. 실제 자금이 투입되지 않은 모의 운용이며 개별 종목 추천이 아니다. 과거 기록은 소급 수정하지 않는다.",
+  "_주석": "개시일 보유 종목과 0일차 순자산. 매수 수수료는 현금에서 차감했으므로 0일차 순자산은 초기자본보다 수수료만큼 작다. 실제 자금이 투입되지 않은 모의 운용이며 개별 종목 추천이 아니다. 과거 기록은 소급 수정하지 않는다.",
   "schema_version": "1.0",
   "instance": "KR-01",
   "date": "2026-09-15",
@@ -16,7 +16,9 @@
     "initial": 100000000,
     "per_holding_target": 3333333,
     "allocated": 99999990,
-    "unallocated": 10
+    "unallocated": 10,
+    "invested": 99792399,
+    "commission": 14971
   },
   "price_basis": {
     "date": "2026-09-15",
@@ -36,9 +38,12 @@
       "name": "성도이엔지",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 463,
+      "buy_price": 7190,
+      "note": null,
+      "buy_amount": 3328970,
+      "commission": 499,
+      "value": 3328970
     },
     {
       "rank": 2,
@@ -46,9 +51,12 @@
       "name": "아이티센씨티에스",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 578,
+      "buy_price": 5760,
+      "note": null,
+      "buy_amount": 3329280,
+      "commission": 499,
+      "value": 3329280
     },
     {
       "rank": 3,
@@ -56,9 +64,12 @@
       "name": "동아엘텍",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 586,
+      "buy_price": 5680,
+      "note": null,
+      "buy_amount": 3328480,
+      "commission": 499,
+      "value": 3328480
     },
     {
       "rank": 4,
@@ -66,9 +77,12 @@
       "name": "MDS테크",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 1730,
+      "buy_price": 1926,
+      "note": null,
+      "buy_amount": 3331980,
+      "commission": 500,
+      "value": 3331980
     },
     {
       "rank": 5,
@@ -76,9 +90,12 @@
       "name": "우원개발",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 1201,
+      "buy_price": 2775,
+      "note": null,
+      "buy_amount": 3332775,
+      "commission": 500,
+      "value": 3332775
     },
     {
       "rank": 6,
@@ -86,9 +103,12 @@
       "name": "한국정보통신",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 402,
+      "buy_price": 8280,
+      "note": null,
+      "buy_amount": 3328560,
+      "commission": 499,
+      "value": 3328560
     },
     {
       "rank": 7,
@@ -96,9 +116,12 @@
       "name": "한국컴퓨터",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 752,
+      "buy_price": 4430,
+      "note": null,
+      "buy_amount": 3331360,
+      "commission": 500,
+      "value": 3331360
     },
     {
       "rank": 8,
@@ -106,9 +129,12 @@
       "name": "더핑크퐁컴퍼니",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 265,
+      "buy_price": 12550,
+      "note": null,
+      "buy_amount": 3325750,
+      "commission": 499,
+      "value": 3325750
     },
     {
       "rank": 9,
@@ -116,9 +142,12 @@
       "name": "아이스크림미디어",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 174,
+      "buy_price": 19100,
+      "note": null,
+      "buy_amount": 3323400,
+      "commission": 499,
+      "value": 3323400
     },
     {
       "rank": 10,
@@ -126,9 +155,12 @@
       "name": "이노션",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 181,
+      "buy_price": 18380,
+      "note": null,
+      "buy_amount": 3326780,
+      "commission": 499,
+      "value": 3326780
     },
     {
       "rank": 11,
@@ -136,9 +168,12 @@
       "name": "NICE",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 272,
+      "buy_price": 12250,
+      "note": null,
+      "buy_amount": 3332000,
+      "commission": 500,
+      "value": 3332000
     },
     {
       "rank": 12,
@@ -146,9 +181,12 @@
       "name": "SGA솔루션즈",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 1443,
+      "buy_price": 2310,
+      "note": null,
+      "buy_amount": 3333330,
+      "commission": 500,
+      "value": 3333330
     },
     {
       "rank": 13,
@@ -156,9 +194,12 @@
       "name": "에스텍",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 255,
+      "buy_price": 13060,
+      "note": null,
+      "buy_amount": 3330300,
+      "commission": 500,
+      "value": 3330300
     },
     {
       "rank": 14,
@@ -166,9 +207,12 @@
       "name": "케이티알파",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 692,
+      "buy_price": 4815,
+      "note": null,
+      "buy_amount": 3331980,
+      "commission": 500,
+      "value": 3331980
     },
     {
       "rank": 15,
@@ -176,9 +220,12 @@
       "name": "엠플러스",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 361,
+      "buy_price": 9210,
+      "note": null,
+      "buy_amount": 3324810,
+      "commission": 499,
+      "value": 3324810
     },
     {
       "rank": 16,
@@ -186,9 +233,12 @@
       "name": "FSN",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 2568,
+      "buy_price": 1298,
+      "note": null,
+      "buy_amount": 3333264,
+      "commission": 500,
+      "value": 3333264
     },
     {
       "rank": 17,
@@ -196,9 +246,12 @@
       "name": "디와이에이",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 977,
+      "buy_price": 3410,
+      "note": null,
+      "buy_amount": 3331570,
+      "commission": 500,
+      "value": 3331570
     },
     {
       "rank": 18,
@@ -206,9 +259,12 @@
       "name": "메가스터디교육",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 95,
+      "buy_price": 34750,
+      "note": null,
+      "buy_amount": 3301250,
+      "commission": 495,
+      "value": 3301250
     },
     {
       "rank": 19,
@@ -216,9 +272,12 @@
       "name": "위메이드플레이",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 506,
+      "buy_price": 6580,
+      "note": null,
+      "buy_amount": 3329480,
+      "commission": 499,
+      "value": 3329480
     },
     {
       "rank": 20,
@@ -226,9 +285,12 @@
       "name": "오파스넷",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 483,
+      "buy_price": 6900,
+      "note": null,
+      "buy_amount": 3332700,
+      "commission": 500,
+      "value": 3332700
     },
     {
       "rank": 21,
@@ -236,9 +298,12 @@
       "name": "고려산업",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 1633,
+      "buy_price": 2040,
+      "note": null,
+      "buy_amount": 3331320,
+      "commission": 500,
+      "value": 3331320
     },
     {
       "rank": 22,
@@ -246,9 +311,12 @@
       "name": "오로라",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 231,
+      "buy_price": 14370,
+      "note": null,
+      "buy_amount": 3319470,
+      "commission": 498,
+      "value": 3319470
     },
     {
       "rank": 23,
@@ -256,9 +324,12 @@
       "name": "DL이앤씨",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 37,
+      "buy_price": 89400,
+      "note": null,
+      "buy_amount": 3307800,
+      "commission": 496,
+      "value": 3307800
     },
     {
       "rank": 24,
@@ -266,9 +337,12 @@
       "name": "에이텍모빌리티",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 384,
+      "buy_price": 8660,
+      "note": null,
+      "buy_amount": 3325440,
+      "commission": 499,
+      "value": 3325440
     },
     {
       "rank": 25,
@@ -276,9 +350,12 @@
       "name": "배럴",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 1014,
+      "buy_price": 3285,
+      "note": null,
+      "buy_amount": 3330990,
+      "commission": 500,
+      "value": 3330990
     },
     {
       "rank": 26,
@@ -286,9 +363,12 @@
       "name": "국보디자인",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 133,
+      "buy_price": 25000,
+      "note": null,
+      "buy_amount": 3325000,
+      "commission": 499,
+      "value": 3325000
     },
     {
       "rank": 27,
@@ -296,9 +376,12 @@
       "name": "유니트론텍",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 572,
+      "buy_price": 5820,
+      "note": null,
+      "buy_amount": 3329040,
+      "commission": 499,
+      "value": 3329040
     },
     {
       "rank": 28,
@@ -306,9 +389,12 @@
       "name": "한네트",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 1116,
+      "buy_price": 2985,
+      "note": null,
+      "buy_amount": 3331260,
+      "commission": 500,
+      "value": 3331260
     },
     {
       "rank": 29,
@@ -316,9 +402,12 @@
       "name": "SOOP",
       "market": "KOSDAQ",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 89,
+      "buy_price": 37050,
+      "note": null,
+      "buy_amount": 3297450,
+      "commission": 495,
+      "value": 3297450
     },
     {
       "rank": 30,
@@ -326,11 +415,20 @@
       "name": "신세계 I&C",
       "market": "KOSPI",
       "target_amount": 3333333,
-      "shares": null,
-      "buy_price": null,
-      "note": null
+      "shares": 217,
+      "buy_price": 15330,
+      "note": null,
+      "buy_amount": 3326610,
+      "commission": 499,
+      "value": 3326610
     }
   ],
-  "cash": null,
-  "nav": null
+  "cash": 192630,
+  "nav": 99985029,
+  "benchmark": {
+    "코스피": 6627.26,
+    "코스닥": 812.41,
+    "basis": "가격지수"
+  },
+  "filled_at": "2026-09-16T22:49:58+09:00"
 }
