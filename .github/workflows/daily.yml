@@ -1,0 +1,101 @@
+name: Daily NAV
+
+# 일별 NAV 수집. 09:00 KST 본 실행, 11:00 KST 보충 실행.
+# GitHub cron 은 UTC 이고 10~15분 늦게 도는 것이 관측됐다 (D22·D29).
+# KRX 는 전일 데이터를 당일 08:00 KST 경에 게시하므로 09:00 실행은 1시간 여유가 있다.
+#
+# 스크립트가 '마지막 기록일+1 ~ 어제' 를 훑으므로 이 워크플로가 며칠 실패해도
+# 다음 성공 실행이 빠진 날을 전부 채운다. 11:00 실행은 09:00 이 이미 채웠으면
+# 종료코드 2로 아무 일도 하지 않는다.
+#
+# Run workflow 에서 probe_date 를 넣으면 API 점검만 한다.
+# 조회만 하고 nav.csv 에 아무것도 쓰지 않으며 커밋도 하지 않는다.
+# 인증키가 유효한지, GitHub 러너에서 KRX API 에 닿는지를 확인하는 용도다.
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 00:00 UTC = 09:00 KST
+    - cron: '0 2 * * *'   # 02:00 UTC = 11:00 KST
+  workflow_dispatch:
+    inputs:
+      probe_date:
+        description: 'API 점검만 할 날짜 (YYYYMMDD). 비워두면 평소대로 NAV 수집'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-nav
+  cancel-in-progress: false
+
+jobs:
+  nav:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 가져오기
+        uses: actions/checkout@v4
+
+      - name: 파이썬 준비
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: API 점검 (probe_date 를 넣은 경우에만)
+        if: github.event.inputs.probe_date != ''
+        env:
+          KRX_API_KEY: ${{ secrets.KRX_API_KEY }}
+          GILOGBOOK_REPO: ${{ github.workspace }}
+          GILOGBOOK_CACHE: ${{ runner.temp }}/krx
+          PROBE: ${{ github.event.inputs.probe_date }}
+        run: |
+          if [ -z "$KRX_API_KEY" ]; then
+            echo "::error::KRX_API_KEY Secret 이 비어 있습니다. 저장소 Settings > Secrets and variables > Actions 에서 등록하세요."
+            exit 1
+          fi
+          echo "인증키 길이 ${#KRX_API_KEY}자"
+          python scripts/daily_nav.py --probe "$PROBE"
+
+      - name: NAV 수집
+        id: nav
+        if: github.event.inputs.probe_date == ''
+        env:
+          KRX_API_KEY: ${{ secrets.KRX_API_KEY }}
+          GILOGBOOK_REPO: ${{ github.workspace }}
+          GILOGBOOK_CACHE: ${{ runner.temp }}/krx
+        run: |
+          if [ -z "$KRX_API_KEY" ]; then
+            echo "::error::KRX_API_KEY Secret 이 비어 있습니다. 저장소 Settings > Secrets and variables > Actions 에서 등록하세요."
+            exit 1
+          fi
+          set +e
+          python scripts/daily_nav.py
+          rc=$?
+          set -e
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "종료코드 $rc"
+          if [ "$rc" = "1" ]; then
+            echo "::error::NAV 수집 실패. 아무것도 기록하지 않았습니다. 위 로그를 확인하세요."
+            exit 1
+          fi
+
+      - name: 커밋·push
+        if: steps.nav.outputs.rc == '0' || steps.nav.outputs.rc == '2'
+        env:
+          REC: ${{ steps.nav.outputs.recorded }}
+          NT: ${{ steps.nav.outputs.nontrading }}
+        run: |
+          git config user.name  "gilogbook"
+          git config user.email "318230349+gilogbook@users.noreply.github.com"
+          git add nav.csv nontrading.json
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋하지 않습니다"
+            exit 0
+          fi
+          MSG="nav: 자동 수집"
+          if [ -n "$REC" ]; then MSG="nav: $REC 수집"; fi
+          if [ -n "$NT" ]; then MSG="$MSG · 비거래일 확정 $NT"; fi
+          git commit -m "$MSG"
+          git push || { git pull --rebase && git push; }
+          echo "$MSG"

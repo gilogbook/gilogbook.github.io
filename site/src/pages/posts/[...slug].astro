@@ -21,8 +21,15 @@ const { Content } = await render(post);
 // 커밋 이력 링크
 // 2026-09-05에 글 파일을 src/pages/posts/ 에서 src/content/posts/ 로 옮겼다.
 // GitHub의 경로별 커밋 이력은 이동 이전 커밋을 따라가지 않으므로 두 경로를 함께 건다.
+//
+// 이동 시점 이후에 발행된 글은 src/pages/posts/ 에 있었던 적이 없다.
+// 그 글에까지 이전 경로 링크를 걸면 빈 커밋 이력 페이지로 연결된다.
+// 그래서 발행일이 이동 시점보다 앞선 글에만 이전 경로를 건다. (2026-09-19 수정)
+const MOVED_AT = new Date('2026-09-05T00:00:00+09:00');
 const commitPath = `site/src/content/posts/${post.id}.md`;
-const legacyPath = `site/src/pages/posts/${post.id}.md`;
+const legacyPath = post.data.pubDate < MOVED_AT
+  ? `site/src/pages/posts/${post.id}.md`
+  : null;
 ---
 
 <PostLayout frontmatter={post.data} commitPath={commitPath} legacyPath={legacyPath}>
