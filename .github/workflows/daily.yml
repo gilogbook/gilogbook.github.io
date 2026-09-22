@@ -1,16 +1,24 @@
 name: Daily NAV
 
-# 일별 NAV 수집. 09:00 KST 본 실행, 11:00 KST 보충 실행.
-# GitHub cron 은 UTC 이고 10~15분 늦게 도는 것이 관측됐다 (D22·D29).
+# 일별 NAV 수집 + 이벤트 감지. 09:00 KST 본 실행, 11:00 KST 보충 실행.
+# GitHub cron 은 UTC 이고 정시를 보장하지 않는다. 이르게 도는 일은 없고 늦거나 건너뛴다.
+# 실측 — 예약 실행 시각(KST) 09-20 11:28·16:15 / 09-21 16:46. 지연 폭은 매 회 기록해 관측을 쌓는다.
 # KRX 는 전일 데이터를 당일 08:00 KST 경에 게시하므로 09:00 실행은 1시간 여유가 있다.
 #
 # 스크립트가 '마지막 기록일+1 ~ 어제' 를 훑으므로 이 워크플로가 며칠 실패해도
 # 다음 성공 실행이 빠진 날을 전부 채운다. 11:00 실행은 09:00 이 이미 채웠으면
 # 종료코드 2로 아무 일도 하지 않는다.
 #
+# 이벤트 감지(scripts/detect_events.py)는 NAV 를 새로 기록한 실행(종료코드 0)에서만 돈다.
+# 감지 스크립트가 실패해도 NAV 커밋은 막지 않는다. 경고만 남기고 다음 실행이 다시 판정한다.
+#
 # Run workflow 에서 probe_date 를 넣으면 API 점검만 한다.
 # 조회만 하고 nav.csv 에 아무것도 쓰지 않으며 커밋도 하지 않는다.
 # 인증키가 유효한지, GitHub 러너에서 KRX API 에 닿는지를 확인하는 용도다.
+#
+# 액션 판올림 (2026-09-22) — checkout v4→v7, setup-python v5→v7.
+# 둘 다 runs.using: node24 (각 action.yml 실측). GitHub 는 러너에서 Node 20 을 2026-09-23 에 제거한다.
+# checkout v6 부터 자격 증명을 .git/config 대신 $RUNNER_TEMP 에 두지만 git push 는 그대로 동작한다 (README).
 
 on:
   schedule:
@@ -35,10 +43,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 저장소 가져오기
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: 파이썬 준비
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -80,15 +88,34 @@ jobs:
             exit 1
           fi
 
+      - name: 이벤트 감지 (NAV 를 새로 기록한 경우에만)
+        id: ev
+        if: github.event.inputs.probe_date == '' && steps.nav.outputs.rc == '0'
+        env:
+          GILOGBOOK_REPO: ${{ github.workspace }}
+        run: |
+          set +e
+          python scripts/detect_events.py
+          rc=$?
+          set -e
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          echo "종료코드 $rc"
+          if [ "$rc" = "1" ]; then
+            echo "::warning::이벤트 감지 스크립트 오류. NAV 기록과 커밋은 그대로 진행합니다. 다음 실행이 다시 판정합니다."
+          fi
+
       - name: 커밋·push
-        if: steps.nav.outputs.rc == '0' || steps.nav.outputs.rc == '2'
+        if: github.event.inputs.probe_date == '' && (steps.nav.outputs.rc == '0' || steps.nav.outputs.rc == '2')
         env:
           REC: ${{ steps.nav.outputs.recorded }}
           NT: ${{ steps.nav.outputs.nontrading }}
+          EVN: ${{ steps.ev.outputs.events }}
+          EVMSG: ${{ steps.ev.outputs.event_msg }}
         run: |
           git config user.name  "gilogbook"
           git config user.email "318230349+gilogbook@users.noreply.github.com"
           git add nav.csv nontrading.json
+          if [ -f events.csv ]; then git add events.csv; fi
           if git diff --cached --quiet; then
             echo "변경 없음 — 커밋하지 않습니다"
             exit 0
@@ -96,6 +123,7 @@ jobs:
           MSG="nav: 자동 수집"
           if [ -n "$REC" ]; then MSG="nav: $REC 수집"; fi
           if [ -n "$NT" ]; then MSG="$MSG · 비거래일 확정 $NT"; fi
+          if [ -n "$EVN" ] && [ "$EVN" != "0" ]; then MSG="$MSG · 이벤트 ${EVN}건 ($EVMSG)"; fi
           git commit -m "$MSG"
           git push || { git pull --rebase && git push; }
           echo "$MSG"
