@@ -1,0 +1,243 @@
+---
+// KR-01 운용 페이지.
+//
+// 저장소 루트의 기록 파일을 빌드 시점에 읽어 숫자를 만든다.
+// 사람이 이 파일의 수치를 손으로 고치는 일은 없다 — 매일 도는 재빌드가 갱신한다.
+// 기록 파일 자체는 자동 수집이 추가만 하고, 이 페이지는 그것을 읽기만 한다.
+//
+// 읽는 파일 (경로는 site/ 기준)
+//   ../nav.csv            일별 순자산
+//   ../nontrading.json    비거래일 확정 목록
+//   ../events.csv         이벤트 기록
+//   ../meta.json          개시 전 확정된 규칙
+//   ../holdings/*.json    보유 종목 (가장 최근 파일)
+import fs from 'node:fs';
+import path from 'node:path';
+import PostLayout from '../../../layouts/PostLayout.astro';
+
+const ROOT = path.resolve(process.cwd(), '..');
+const readText = (p) => fs.readFileSync(path.join(ROOT, p), 'utf-8');
+const readJson = (p) => JSON.parse(readText(p));
+
+// ---------------------------------------------------------------- 기록 읽기
+
+const navRows = readText('nav.csv')
+  .trim()
+  .split('\n')
+  .slice(1)
+  .map((line) => {
+    const c = line.split(',');
+    return {
+      date: c[0],
+      nav: c[1], holdings_value: c[2], cash: c[3],
+      kospi: c[4], kosdaq: c[5], note: c[6] ?? '',
+    };
+  })
+  .sort((a, b) => a.date.localeCompare(b.date));
+
+// 값이 전부 빈 행은 결측 확정일이다 (방법론 §7)
+const isGap = (r) => !r.nav && !r.holdings_value && !r.cash && !r.kospi && !r.kosdaq;
+const recorded = navRows.filter((r) => !isGap(r));
+const gaps = navRows.filter(isGap);
+
+const num = (s) => Number(String(s).replace(/,/g, ''));
+const base = recorded[0];
+const last = recorded[recorded.length - 1];
+
+const nav0 = num(base.nav), ks0 = num(base.kospi), kq0 = num(base.kosdaq);
+const navRet = (num(last.nav) / nav0 - 1) * 100;
+const ksRet = (num(last.kospi) / ks0 - 1) * 100;
+const kqRet = (num(last.kosdaq) / kq0 - 1) * 100;
+
+// 최대낙폭 — 기록된 순자산의 고점 대비 최대 하락
+let peak = -Infinity, mdd = 0, mddDate = '';
+for (const r of recorded) {
+  const v = num(r.nav);
+  if (v > peak) peak = v;
+  const dd = (v / peak - 1) * 100;
+  if (dd < mdd) { mdd = dd; mddDate = r.date; }
+}
+
+const ntDays = Object.keys(readJson('nontrading.json').days ?? {}).sort();
+
+const evRows = readText('events.csv')
+  .trim()
+  .split('\n')
+  .slice(1)
+  .filter((l) => l.trim())
+  .map((line) => {
+    const c = line.split(',');
+    return { date: c[0], type: c[1], value: c[2], detail: c[3] ?? '' };
+  });
+
+const meta = readJson('meta.json');
+const kr = meta.instances.find((x) => x.id === 'KR-01');
+
+const holdFiles = fs.readdirSync(path.join(ROOT, 'holdings')).filter((f) => f.endsWith('.json')).sort();
+const holdFile = holdFiles[holdFiles.length - 1];
+const hold = readJson(path.join('holdings', holdFile));
+const holdings = hold.holdings ?? [];
+
+// ---------------------------------------------------------------- 표시 형식
+
+const won = (v) => Number(v).toLocaleString('ko-KR');
+const pct = (v) => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+const pp = (v) => (v >= 0 ? '+' : '') + v.toFixed(2) + '%p';
+const idx = (v) => Number(v).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const RECENT = 20;
+const recentRows = [...navRows].reverse().slice(0, RECENT);
+
+const EV_LABEL = {
+  nav_move: '순자산 등락',
+  excess_sign: '초과수익 부호 전환',
+  delist: '상장폐지',
+  code_change: '종목코드 변경',
+  corp_action: '권리락',
+  missing: '결측 확정',
+  note: '메모',
+};
+
+const fm = {
+  title: '마법공식 · 한국',
+  description: 'KR-01 마법공식 한국 포트폴리오의 운용 기록 — 순자산·벤치마크 대비·보유 종목',
+  category: '마법공식 / 한국',
+};
+---
+
+<PostLayout frontmatter={fm}>
+  <p><strong>KR-01 — 마법공식 한국 포트폴리오.</strong> 규칙이 고른 30종목을 2026년 9월 15일 종가에 매수했다고 가정하고, 그 뒤 거래일마다 순자산을 기록합니다. 아래 수치는 저장소의 기록 파일에서 자동으로 만들어집니다. 사람이 손으로 적지 않습니다.</p>
+
+  <h2>현재 기록</h2>
+
+  <table>
+    <tbody>
+      <tr><td>기준일</td><td>{last.date} (개시 후 {recorded.length - 1}거래일)</td></tr>
+      <tr><td>순자산</td><td><strong>{won(last.nav)}원</strong> — 보유 {won(last.holdings_value)}원 + 현금 {won(last.cash)}원</td></tr>
+      <tr><td>개시 대비</td><td><strong>{pct(navRet)}</strong></td></tr>
+      <tr><td>코스피 (주 벤치마크)</td><td>{idx(last.kospi)} · {pct(ksRet)} → <strong>초과수익 {pp(navRet - ksRet)}</strong></td></tr>
+      <tr><td>코스닥 (부 벤치마크)</td><td>{idx(last.kosdaq)} · {pct(kqRet)} → 초과수익 {pp(navRet - kqRet)}</td></tr>
+      <tr><td>최대낙폭</td><td>{mdd === 0 ? '0.00% (고점 갱신 중)' : `${mdd.toFixed(2)}% (${mddDate})`}</td></tr>
+      <tr><td>기록 일수</td><td>{recorded.length}일 · <strong>결측 {gaps.length}일</strong> · 비거래일 확정 {ntDays.length}일</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>이 수치로는 전략에 대해 아무것도 판단할 수 없습니다.</strong> 기록이 {recorded.length}거래일뿐입니다. 연 1회 리밸런싱 전략에서 이 길이의 구간은 표본이라고 부를 수도 없습니다. 최소 3년이 필요하다는 근거는 <a href="/about">소개</a>에 적어두었습니다.</p>
+
+  <h2>확정 커밋</h2>
+
+  <p>규칙을 먼저, 종목을 그다음, 가격을 마지막에 공개했습니다. 순서가 커밋 이력에 남아 있어 나중에 뒤바꿀 수 없습니다.</p>
+
+  <table>
+    <thead><tr><th>커밋</th><th>확정된 것</th><th>날짜</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/88b3fdf"><code>88b3fdf</code></a></td><td>규칙 — 초기자본·비용·배당·벤치마크 (<code>meta.json</code>)</td><td>2026-09-13</td></tr>
+      <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/b1dcb48"><code>b1dcb48</code></a></td><td>종목 — 30종목과 목표 비중</td><td>2026-09-15</td></tr>
+      <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/5536ec9"><code>5536ec9</code></a></td><td>가격 — 매수 단가·주수·0일차 순자산</td><td>2026-09-16</td></tr>
+    </tbody>
+  </table>
+
+  <p>규칙 커밋이 개시일보다 이틀 앞섭니다. 결과를 모르는 상태에서 규칙을 고정했다는 뜻입니다.</p>
+
+  <h2>규칙</h2>
+
+  <table>
+    <tbody>
+      <tr><td>유니버스</td><td>{kr.strategy.universe} — 제외 후 {won(kr.strategy.universe_size)}종목, 순위 산출 {won(kr.strategy.ranked_size)}종목</td></tr>
+      <tr><td>종목 수</td><td>{kr.strategy.holdings_count}종목 · {kr.strategy.weighting}</td></tr>
+      <tr><td>시가총액 하한</td><td>두지 않습니다</td></tr>
+      <tr><td>초기자본</td><td>{won(kr.capital.initial)}원 (종목당 {won(kr.capital.per_holding_target)}원, 단주 내림)</td></tr>
+      <tr><td>비용</td><td>매수·매도 수수료 각 {(kr.costs.buy_commission_rate * 100).toFixed(3)}% · 증권거래세 매도 시 {(kr.costs.transaction_tax_rate * 100).toFixed(2)}% · 슬리피지 0%</td></tr>
+      <tr><td>배당</td><td>가격 기준 (배당 제외). 받은 배당은 순자산에 넣지 않고 별도 누적만</td></tr>
+      <tr><td>벤치마크</td><td>주 {kr.benchmark.primary} · 부 {kr.benchmark.secondary} · {kr.benchmark.basis}</td></tr>
+      <tr><td>리밸런싱</td><td>{kr.strategy.rebalance} (다음 교체 2027년 4월)</td></tr>
+    </tbody>
+  </table>
+
+  <p>각 항목을 그렇게 정한 이유와 원전과 갈라진 지점은 <a href="/methodology">방법론</a>에 있습니다.</p>
+
+  <h2>보유 종목 {holdings.length}</h2>
+
+  <p>{hold.date} 종가 기준으로 확정된 구성입니다. <strong>다음 리밸런싱까지 바뀌지 않습니다.</strong> 순위는 규칙이 매긴 것이고, 추천이 아닙니다.</p>
+
+  <table>
+    <thead><tr><th>순위</th><th>종목</th><th>시장</th><th>주수</th><th>매수 단가</th><th>매수 금액</th></tr></thead>
+    <tbody>
+      {holdings.map((h) => (
+        <tr>
+          <td>{h.rank}</td>
+          <td>{h.name} <code>{h.code}</code></td>
+          <td>{h.market}</td>
+          <td>{won(h.shares)}</td>
+          <td>{won(h.buy_price)}원</td>
+          <td>{won(h.buy_amount)}원</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <p><strong>개별 종목의 일별 종가는 기록하지 않습니다.</strong> 순자산 합계만 남깁니다. 따라서 이 표의 종목별 현재 수익률은 이 사이트에 없습니다.</p>
+
+  <h2>최근 기록</h2>
+
+  <p>최근 {Math.min(RECENT, navRows.length)}개 기록일입니다. 전체는 <a href="https://github.com/gilogbook/gilogbook.github.io/blob/main/nav.csv">nav.csv</a>에 있습니다.</p>
+
+  <table>
+    <thead><tr><th>일자</th><th>순자산</th><th>개시 대비</th><th>코스피</th><th>코스닥</th><th>비고</th></tr></thead>
+    <tbody>
+      {recentRows.map((r) => (
+        isGap(r) ? (
+          <tr><td>{r.date}</td><td colspan="4"><strong>결측</strong></td><td>{r.note}</td></tr>
+        ) : (
+          <tr>
+            <td>{r.date}</td>
+            <td>{won(r.nav)}</td>
+            <td>{pct((num(r.nav) / nav0 - 1) * 100)}</td>
+            <td>{idx(r.kospi)}</td>
+            <td>{idx(r.kosdaq)}</td>
+            <td>{r.note}</td>
+          </tr>
+        )
+      ))}
+    </tbody>
+  </table>
+
+  <h2>이벤트 기록</h2>
+
+  {evRows.length === 0 ? (
+    <p><strong>아직 없습니다.</strong> 순자산이 전 기록일 대비 5% 이상 움직이거나, 코스피 대비 누적 초과수익의 부호가 바뀌거나, 보유 종목의 구성이 바뀌거나, 결측이 확정되면 여기에 쌓입니다. 감지 규칙은 <a href="/methodology">방법론</a>에 있습니다.</p>
+  ) : (
+    <table>
+      <thead><tr><th>일자</th><th>유형</th><th>값</th><th>내용</th></tr></thead>
+      <tbody>
+        {evRows.map((e) => (
+          <tr><td>{e.date}</td><td>{EV_LABEL[e.type] ?? e.type}</td><td>{e.value}</td><td>{e.detail}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+
+  <h2>원본</h2>
+
+  <p>이 페이지의 모든 숫자는 아래 파일에서 나옵니다. 가공 전의 값을 직접 보실 수 있습니다.</p>
+
+  <ul>
+    <li><a href="https://github.com/gilogbook/gilogbook.github.io/blob/main/nav.csv">nav.csv</a> — 일별 순자산과 지수</li>
+    <li><a href={`https://github.com/gilogbook/gilogbook.github.io/blob/main/holdings/${holdFile}`}>holdings/{holdFile}</a> — 보유 종목·주수·매수 단가</li>
+    <li><a href="https://github.com/gilogbook/gilogbook.github.io/blob/main/events.csv">events.csv</a> — 이벤트 기록</li>
+    <li><a href="https://github.com/gilogbook/gilogbook.github.io/blob/main/nontrading.json">nontrading.json</a> — 비거래일 판정</li>
+    <li><a href="https://github.com/gilogbook/gilogbook.github.io/blob/main/meta.json">meta.json</a> — 개시 전 확정된 규칙</li>
+  </ul>
+
+  <h2>이 기록의 한계</h2>
+
+  <ul>
+    <li><strong>실제 자금이 투입되지 않은 모의 운용입니다.</strong> 체결과 유동성 제약이 반영되지 않습니다.</li>
+    <li><strong>슬리피지를 0으로 둡니다.</strong> 종가에 체결됐다고 가정합니다.</li>
+    <li><strong>배당이 순자산에 반영되지 않습니다.</strong> 전략과 벤치마크를 대칭으로 맞추려고 양쪽 모두 가격 기준으로 통일했습니다.</li>
+    <li><strong>시가총액 하한이 없어 실제로 살 수 없는 종목이 들어 있을 수 있습니다.</strong> 보유 30종목 중 14종목이 시가총액 1,000억 원 미만입니다.</li>
+    <li><strong>거래정지·관리종목 지정을 자동으로 감지하지 못합니다.</strong> 거래소 응답에 신호가 없습니다.</li>
+  </ul>
+
+  <p>한계 전체 목록과 각각의 근거는 <a href="/methodology">방법론</a>에 있습니다. 17건입니다.</p>
+</PostLayout>
