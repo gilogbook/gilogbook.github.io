@@ -147,6 +147,7 @@ const fm = {
       <tr><td>종목 수</td><td>{kr.strategy.holdings_count}종목 · {kr.strategy.weighting}</td></tr>
       <tr><td>시가총액 하한</td><td>두지 않습니다</td></tr>
       <tr><td>초기자본</td><td>{won(kr.capital.initial)}원 (종목당 {won(kr.capital.per_holding_target)}원, 단주 내림)</td></tr>
+      <tr><td>종가</td><td>거래소 공식 종가(15시 30분 정규장). 2026년 9월 14일부터 포털은 20시 애프터마켓 종료 가격을 종가로 표시하므로, 포털 가격으로 검산하면 다를 수 있습니다</td></tr>
       <tr><td>비용</td><td>매수·매도 수수료 각 {(kr.costs.buy_commission_rate * 100).toFixed(3)}% · 증권거래세 매도 시 {(kr.costs.transaction_tax_rate * 100).toFixed(2)}% · 슬리피지 0%</td></tr>
       <tr><td>배당</td><td>가격 기준 (배당 제외). 받은 배당은 순자산에 넣지 않고 별도 누적만</td></tr>
       <tr><td>벤치마크</td><td>주 {kr.benchmark.primary} · 부 {kr.benchmark.secondary} · {kr.benchmark.basis}</td></tr>
