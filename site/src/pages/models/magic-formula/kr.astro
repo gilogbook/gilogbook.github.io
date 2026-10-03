@@ -114,7 +114,7 @@ const fm = {
     <tbody>
       <tr><td>기준일</td><td>{last.date} (개시 후 {recorded.length - 1}거래일)</td></tr>
       <tr><td>순자산</td><td><strong>{won(last.nav)}원</strong> — 보유 {won(last.holdings_value)}원 + 현금 {won(last.cash)}원</td></tr>
-      <tr><td>개시 대비</td><td><strong>{pct(navRet)}</strong></td></tr>
+      <tr><td>개시 대비</td><td><strong>{pct(navRet)}</strong> — 0일차 순자산(매수 수수료 차감 후) 대비</td></tr>
       <tr><td>코스피 (주 벤치마크)</td><td>{idx(last.kospi)} · {pct(ksRet)} → <strong>초과수익 {pp(navRet - ksRet)}</strong></td></tr>
       <tr><td>코스닥 (부 벤치마크)</td><td>{idx(last.kosdaq)} · {pct(kqRet)} → 초과수익 {pp(navRet - kqRet)}</td></tr>
       <tr><td>최대낙폭</td><td>{mdd === 0 ? '0.00% (고점 갱신 중)' : `${mdd.toFixed(2)}% (${mddDate})`}</td></tr>
@@ -122,7 +122,7 @@ const fm = {
     </tbody>
   </table>
 
-  <p><strong>이 수치로는 전략에 대해 아무것도 판단할 수 없습니다.</strong> 기록이 {recorded.length}거래일뿐입니다. 연 1회 리밸런싱 전략에서 이 길이의 구간은 표본이라고 부를 수도 없습니다. 최소 3년이 필요하다는 근거는 <a href="/about">소개</a>에 적어두었습니다.</p>
+  <p><strong>이 수치로는 전략에 대해 아무것도 판단할 수 없습니다.</strong> 기록이 {recorded.length}일(0일차 포함)뿐입니다. 연 1회 리밸런싱 전략에서 이 길이의 구간은 표본이라고 부를 수도 없습니다. 최소 3년이 필요하다는 근거는 <a href="/about">소개</a>에 적어두었습니다.</p>
 
   <h2>확정 커밋</h2>
 
@@ -132,12 +132,12 @@ const fm = {
     <thead><tr><th>커밋</th><th>확정된 것</th><th>날짜</th></tr></thead>
     <tbody>
       <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/88b3fdf"><code>88b3fdf</code></a></td><td>규칙 — 초기자본·비용·배당·벤치마크 (<code>meta.json</code>)</td><td>2026-09-13</td></tr>
-      <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/b1dcb48"><code>b1dcb48</code></a></td><td>종목 — 30종목과 목표 비중</td><td>2026-09-15</td></tr>
+      <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/b1dcb48"><code>b1dcb48</code></a></td><td>종목 — 30종목과 목표 비중</td><td>2026-09-16 01:39</td></tr>
       <tr><td><a href="https://github.com/gilogbook/gilogbook.github.io/commit/5536ec9"><code>5536ec9</code></a></td><td>가격 — 매수 단가·주수·0일차 순자산</td><td>2026-09-16</td></tr>
     </tbody>
   </table>
 
-  <p>규칙 커밋이 개시일보다 이틀 앞섭니다. 결과를 모르는 상태에서 규칙을 고정했다는 뜻입니다.</p>
+  <p>규칙 커밋이 개시일보다 이틀 앞섭니다. 결과를 모르는 상태에서 규칙을 고정했다는 뜻입니다. 종목 커밋은 개시일 장 마감 뒤, 가격이 게시되기 전에 들어갔습니다(시각은 한국 시각).</p>
 
   <h2>규칙</h2>
 
@@ -155,7 +155,7 @@ const fm = {
     </tbody>
   </table>
 
-  <p>각 항목을 그렇게 정한 이유와 원전과 갈라진 지점은 <a href="/methodology">방법론</a>에 있습니다.</p>
+  <p>각 항목을 그렇게 정한 이유와 원전과 다른 지점 8건은 <a href="/methodology">방법론</a>에 있습니다. 수치의 정의(개시 대비·초과수익·최대낙폭)도 그곳에 있습니다.</p>
 
   <h2>보유 종목 {holdings.length}</h2>
 
@@ -236,7 +236,7 @@ const fm = {
     <li><strong>실제 자금이 투입되지 않은 모의 운용입니다.</strong> 체결과 유동성 제약이 반영되지 않습니다.</li>
     <li><strong>슬리피지를 0으로 둡니다.</strong> 종가에 체결됐다고 가정합니다.</li>
     <li><strong>배당이 순자산에 반영되지 않습니다.</strong> 전략과 벤치마크를 대칭으로 맞추려고 양쪽 모두 가격 기준으로 통일했습니다.</li>
-    <li><strong>시가총액 하한이 없어 실제로 살 수 없는 종목이 들어 있을 수 있습니다.</strong> 보유 30종목 중 14종목이 시가총액 1,000억 원 미만입니다.</li>
+    <li><strong>시가총액 하한이 없어 실제로 살 수 없는 종목이 들어 있을 수 있습니다.</strong> 보유 30종목 중 14종목이 유니버스 기준일(2026-09-07) 시가총액으로 1,000억 원 미만입니다.</li>
     <li><strong>거래정지·관리종목 지정을 자동으로 감지하지 못합니다.</strong> 거래소 응답에 신호가 없습니다.</li>
   </ul>
 
